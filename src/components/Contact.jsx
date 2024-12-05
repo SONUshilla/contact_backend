@@ -1,7 +1,51 @@
 import React from "react";
+import { useState } from "react";
+import axios from "axios";
 import getInTouch from "../assets/images/icon/section-title.png";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; // Add the CSS for styling the toast
+
 
 const Contact = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone : "",
+    message: "",
+  });
+
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // Prevent default form submission
+
+    try {
+      // Send POST request to your server endpoint
+      const response = await axios.post("http://localhost:5000/api/contact", formData);
+
+
+      // Handle success
+      if (response.status === 200) {
+        toast.success("Message sent successfully!");
+        setFormData({
+          name: "",
+          email: "",
+          phone : "",
+          message: "",
+        });
+      }
+    } catch (error) {
+      // Handle error
+      toast.error("An error occurred while sending your message. Please try again.");
+    }
+  };
   return (
     <div>
       {/* Contact area start here */}
@@ -185,58 +229,65 @@ const Contact = () => {
                 <div className="contact__form">
                   <div className="main">
                     <div className="row"> </div>
-                    <form
-                      action="mail_handler.php"
-                      method="post"
-                      name="form"
-                      className="form-box"
-                    >
-                      <label for="name">Name</label>
-                      <br />
-                      <input
-                        type="text"
-                        name="name"
-                        className="inp"
-                        placeholder="Enter Your Name"
-                        required
-                      />
-                      <br />
-                      <label for="email">Email ID</label>
-                      <br />
-                      <input
-                        type="email"
-                        name="email"
-                        className="inp"
-                        placeholder="Enter Your Email"
-                        required
-                      />
-                      <br />
-                      <label for="phone">Phone</label>
-                      <br />
-                      <input
-                        type="tel"
-                        name="phone"
-                        className="inp"
-                        placeholder="Enter Your Phone"
-                        required
-                      />
-                      <br />
-                      <label for="message">Message</label>
-                      <br />
-                      <textarea
-                        name="msg"
-                        className="msg-box"
-                        placeholder="Enter Your Message Here..."
-                        required
-                      ></textarea>
-                      <br />
-                      <input
-                        className="btn-one"
-                        type="submit"
-                        name="submit"
-                        value="Send"
-                      />
-                    </form>
+                    <form onSubmit={handleSubmit} method="post" name="form" className="form-box">
+          <label htmlFor="name">Name</label>
+          <br />
+          <input
+            type="text"
+            name="name"
+            className="inp"
+            placeholder="Enter Your Name"
+            value={formData.name}  // Bind the value to state
+            onChange={handleChange} // Handle change for input
+            required
+          />
+          <br />
+          
+          <label htmlFor="email">Email ID</label>
+          <br />
+          <input
+            type="email"
+            name="email"
+            className="inp"
+            placeholder="Enter Your Email"
+            value={formData.email}  // Bind the value to state
+            onChange={handleChange} // Handle change for input
+            required
+          />
+          <br />
+          
+          <label htmlFor="phone">Phone</label>
+          <br />
+          <input
+            type="tel"
+            name="phone"
+            className="inp"
+            placeholder="Enter Your Phone"
+            value={formData.phone}  // Bind the value to state
+            onChange={handleChange} // Handle change for input
+            required
+          />
+          <br />
+          
+          <label htmlFor="message">Message</label>
+          <br />
+          <textarea
+            name="message"
+            className="msg-box"
+            placeholder="Enter Your Message Here..."
+            value={formData.message}  // Bind the value to state
+            onChange={handleChange} // Handle change for input
+            required
+          ></textarea>
+          <br />
+          
+          <input
+            className="btn-one"
+            type="submit"
+            name="submit"
+            value="Send"
+          />
+        </form>
                   </div>
                 </div>
               </div>
@@ -245,6 +296,7 @@ const Contact = () => {
         </div>
       </section>
       {/* <!-- Contact area end here --> */}
+      <ToastContainer />
     </div>
   );
 };
